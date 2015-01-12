@@ -29,7 +29,7 @@
 	</head>
 
 	<body>
-		<div id="container"></div>
+		<div id="container" style="overflow: hidden;"></div>
 		<div id="info"><a href="http://threejs.org" target="_blank">three.js</a> webgl - interactive - raycasting - pointcloud </div>
 
 		<script src="three/three.js"></script>
@@ -52,11 +52,13 @@
 			var spheresIndex = 0;
 			var clock;
 
+			var mode = 1;
+
 			var threshold = 0.1;
 			var pointSize = 0.05;
 			var width = 150;
 			var length = 150;
-			var rotateY = new THREE.Matrix4().makeRotationZ( 0.000 );
+			var rotateY = new THREE.Matrix4().makeRotationZ( 0.005 );
 			
 			init();
 			animate();
@@ -71,11 +73,11 @@
 				clock = new THREE.Clock();
 
 				camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 1, 10000 );
-				//camera.applyMatrix( new THREE.Matrix4().makeTranslation( 0,0,30 ) );
-				//camera.applyMatrix( new THREE.Matrix4().makeRotationZ( -0.5 ) );
+				camera.applyMatrix( new THREE.Matrix4().makeTranslation( 0,0,30 ) );
+				camera.applyMatrix( new THREE.Matrix4().makeRotationZ( -0.5 ) );
 				//camera.applyMatrix( new THREE.Matrix4().makeTranslation );
-				camera.position = (new THREE.Vector3(-3.25044, 1.50977, -0.0802371));
-				camera.setRotationFromQuaternion(new THREE.Quaternion(0.0539125, -0.449611, -0.883975, 0.116327));
+				//camera.position = (new THREE.Vector3(-3.25044, 1.50977, -0.0802371));
+				//camera.setRotationFromQuaternion(new THREE.Quaternion(0.0539125, -0.449611, -0.883975, 0.116327));
 
 				var sphereGeometry = new THREE.SphereGeometry( 0.5, 32, 32 );
 				var sphereMaterial = new THREE.MeshBasicMaterial( { color: 0xff0000, shading: THREE.FlatShading } );
@@ -177,8 +179,8 @@
 
 			function render() {
 
-				//camera.applyMatrix( rotateY );
-				//camera.updateMatrixWorld( true );
+				if(mode ==0)
+					camera.applyMatrix( rotateY );
 
 				vector.set( mouse.x, mouse.y, 0.1 ).unproject( camera );
 
@@ -200,17 +202,20 @@
 					}
 				}
 
-				toggle += clock.getDelta();
 				
-				var m = toggle%spheres.length;
-				var floor = Math.floor(m);
-				var ceil = Math.ceil(m);
-				//
-				var start = spheres[floor];
-				var end = spheres[ceil];
-				var parcent = m - floor;
 				
-				if(start){
+				if(spheres.length && mode === 1){
+
+					toggle += clock.getDelta();
+				
+					var m = toggle%spheres.length;
+					var floor = Math.floor(m);
+					var ceil = Math.ceil(m);
+					//
+					var start = spheres[floor];
+					var end = spheres[ceil];
+					var parcent = m - floor;
+
 					
 					var pos = new THREE.Vector3();
 					var pos2 = new THREE.Vector3();					
@@ -218,7 +223,7 @@
 					pos.multiplyScalar(1.0 - parcent);
 					pos2.copy(end.position);
 					pos2.multiplyScalar(parcent);
-					camera.position.copy(pos.add(pos2));
+					
 
 					var ori = new THREE.Quaternion();
 					var ori2 = new THREE.Quaternion();
@@ -232,15 +237,14 @@
 					ori2.y *= parcent;
 					ori2.z *= parcent;
 					ori2.w *= parcent;
+					camera.position.copy(pos.add(pos2));
 					camera.quaternion.x = ori.x + ori2.x;
 					camera.quaternion.y = ori.y + ori2.y;
 					camera.quaternion.z = ori.z + ori2.z;
 					camera.quaternion.w = ori.w + ori2.w;
 
-					//console.log(camera.position);
 
-					//var pos = start.position.multiplyScalar(1.0 - parcent);
-					//var pos2 = end.position.multiplyScalar(parcent);
+					
 
 				}
 
