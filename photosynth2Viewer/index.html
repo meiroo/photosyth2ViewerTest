@@ -72,7 +72,7 @@
 
 				clock = new THREE.Clock();
 
-				camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 1, 10000 );
+				camera = new THREE.PerspectiveCamera( 62.4777, window.innerWidth / window.innerHeight, 1, 10000 );
 				camera.applyMatrix( new THREE.Matrix4().makeTranslation( 0,0,30 ) );
 				camera.applyMatrix( new THREE.Matrix4().makeRotationZ( -0.5 ) );
 				//camera.applyMatrix( new THREE.Matrix4().makeTranslation );
@@ -84,7 +84,7 @@
 
 				$.getJSON('models/0.json',{}, function(json, textStatus) {
 						/*optional stuff to do after success */
-						console.log(json.cameras);
+						console.log(json);
 						var cameras = json.cameras;
 						for ( var i = 0; i < cameras.length; i++ ) {
 
@@ -213,7 +213,7 @@
 					var ceil = Math.ceil(m);
 					//
 					var start = spheres[floor];
-					var end = spheres[ceil];
+					var end = spheres[ceil%spheres.length];
 					var parcent = m - floor;
 
 					
